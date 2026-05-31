@@ -23,10 +23,11 @@ public final class Botc extends JavaPlugin {
             getDataFolder().mkdir(); // Crée le dossier /plugins/botc-plugins/
         }
 
-        if (this.getCommand("botc") != null) {
+        var botcCommand = this.getCommand("botc");
+        if (botcCommand != null) {
             BotcCommand cmd = new BotcCommand(this);
-            this.getCommand("botc").setExecutor(cmd);
-            this.getCommand("botc").setTabCompleter(cmd); // <--- AJOUTE CETTE LIGNE
+            botcCommand.setExecutor(cmd);
+            botcCommand.setTabCompleter(cmd);
         }
 
         // Crée une équipe Scoreboard pour masquer les pseudos si elle n'existe pas
@@ -53,8 +54,8 @@ public final class Botc extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RoleSelectionListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatBlockerListener(this), this);
 
-        if (this.getCommand("botc") != null) {
-            this.getCommand("botc").setExecutor(new BotcCommand(this));
+        if (botcCommand != null) {
+            botcCommand.setExecutor(new BotcCommand(this));
         }
 
         this.voteManager = new VoteManager(this);

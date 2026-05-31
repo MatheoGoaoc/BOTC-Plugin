@@ -370,31 +370,33 @@ public class BotcCommand implements CommandExecutor, org.bukkit.command.TabCompl
 
                 String[] parts = chairsStr.get(index).split(",");
                 org.bukkit.World w = Bukkit.getWorld(parts[0]);
-                double x = Double.parseDouble(parts[1]);
-                double y = Double.parseDouble(parts[2]);
-                double z = Double.parseDouble(parts[3]);
-                float yaw = Float.parseFloat(parts[4]);
-                org.bukkit.Location chairLoc = new org.bukkit.Location(w, x, y, z, yaw, 0);
+                if (w != null) {
+                    double x = Double.parseDouble(parts[1]);
+                    double y = Double.parseDouble(parts[2]);
+                    double z = Double.parseDouble(parts[3]);
+                    float yaw = Float.parseFloat(parts[4]);
+                    org.bukkit.Location chairLoc = new org.bukkit.Location(w, x, y, z, yaw, 0);
 
-                // On téléporte le joueur à l'emplacement de la chaise
-                p.teleport(chairLoc);
+                    // On téléporte le joueur à l'emplacement de la chaise
+                    p.teleport(chairLoc);
 
-                // On fait apparaître un wagon (Minecart) à la place de l'ArmorStand
-                org.bukkit.entity.minecart.RideableMinecart chair = w.spawn(chairLoc, org.bukkit.entity.minecart.RideableMinecart.class, minecart -> {
-                    minecart.setVisualFire(false);
-                    minecart.setGravity(false);
-                    minecart.setSilent(true);
-                    minecart.setInvulnerable(true);
-                    minecart.addScoreboardTag("botc_chair");
+                    // On fait apparaître un wagon (Minecart) à la place de l'ArmorStand
+                    org.bukkit.entity.minecart.RideableMinecart chair = w.spawn(chairLoc, org.bukkit.entity.minecart.RideableMinecart.class, minecart -> {
+                        minecart.setGravity(false);
+                        minecart.setSilent(true);
+                        minecart.setInvulnerable(true);
+                        minecart.addScoreboardTag("botc_chair");
 
-                    // --- ASTUCE D'INVISIBILITÉ DU WAGON ---
-                    minecart.setDisplayBlockData(org.bukkit.Bukkit.createBlockData(org.bukkit.Material.AIR));
-                    minecart.setDisplayBlockOffset(0); // Cache le modèle de base en fer sous le bloc d'air !
-                });
+                        // On demande à la console d'appliquer l'effet vanilla au wagon via son UUID unique
+                        // Le "true" à la fin cache les particules de potion
+                        String cmd = "execute as " + minecart.getUniqueId() + " run effect give @s invisibility infinite 1 true";
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    });
 
-                // On assoit le joueur dans le wagon
-                chair.addPassenger(p);
-                index++;
+                    // On assoit le joueur dans le wagon
+                    chair.addPassenger(p);
+                    index++;
+                }
             }
 
             Bukkit.broadcast(Component.text("[BOTC] Le tribunal commence. Tout le monde est assis et identifié !", NamedTextColor.GOLD));

@@ -37,8 +37,13 @@ public class RoleSelectionListener implements Listener {
 
         // Récupération de la description de l'item cliqué
         String desc = "";
-        if (clicked.getItemMeta().hasLore() && clicked.getItemMeta().lore() != null) {
-            desc = PlainTextComponentSerializer.plainText().serialize(clicked.getItemMeta().lore().get(0));
+        var itemMeta = clicked.getItemMeta();
+
+        if (itemMeta != null && itemMeta.hasLore()) {
+            var lore = itemMeta.lore();
+            if (lore != null && !lore.isEmpty()) {
+                desc = PlainTextComponentSerializer.plainText().serialize(lore.getFirst());
+            }
         }
 
         Player targetPlayer = Bukkit.getPlayer(targetName);
